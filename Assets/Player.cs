@@ -164,7 +164,7 @@ public class Player : MonoBehaviour
     void SpawnBullet(GameObject prefab, Vector3 pos, Vector3 dir)
     {
         GameObject b = Instantiate(prefab, pos, Quaternion.identity);
-        b.GetComponent<Bullet>().direction = dir;
+        b.GetComponent<Bullet1>().direction = dir;
     }
 
     // ---------------- PIXEL SNAP ----------------

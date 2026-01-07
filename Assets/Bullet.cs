@@ -2,15 +2,16 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public float speed = 10f;
-    public Vector3 direction = Vector3.up;
+    public Vector2 velocity;
+    public float lifetime = 10f;
+
+    void Start()
+    {
+        Destroy(gameObject, lifetime);
+    }
 
     void Update()
     {
-        transform.position += direction.normalized * speed * Time.deltaTime;
-
-        if (Mathf.Abs(transform.position.y) > 20f ||
-            Mathf.Abs(transform.position.x) > 20f)
-            Destroy(gameObject);
+        transform.position += (Vector3)(velocity * Time.deltaTime);
     }
 }

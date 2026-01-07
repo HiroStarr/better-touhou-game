@@ -106,9 +106,9 @@ MonoBehaviour:
   stopY: 2
   stopTime: 1.5
   curveStrength: 3
-  bulletPrefab: {fileID: 389083415567784590, guid: 4548df58f99d59d4cb0a2b0f5f4cad43, type: 3}
-  fireRate: 1.5
-  hp: 3
+  bulletPrefab: {fileID: 9072667694450103416, guid: 769c47fe835c03f488f581cfe9fe7bef, type: 3}
+  fireRate: 0.5
+  hp: 10
 --- !u!114 &1620835732395232883
 MonoBehaviour:
   m_ObjectHideFlags: 0
