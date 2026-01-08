@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
 
     [Header("Shooting")]
     public GameObject bulletPrefab;          // unfocused bullet
-    public GameObject focusBulletPrefab;     // focused bullet (different sprite)
+    public GameObject focusBulletPrefab;     // focused bullet
     public Transform bulletSpawn;
     public float normalFireRate = 10f;
     public float focusFireRate = 6f;
@@ -146,9 +146,22 @@ public class Player : MonoBehaviour
         if (focusing && focusBulletPrefab != null)
         {
             float offset = 0.15f;
+            Transform target = FindClosestEnemy();
 
-            SpawnBullet(focusBulletPrefab, bulletSpawn.position + Vector3.left * offset, Vector3.up);
-            SpawnBullet(focusBulletPrefab, bulletSpawn.position + Vector3.right * offset, Vector3.up);
+            Vector3 leftPos = bulletSpawn.position + Vector3.left * offset;
+            Vector3 rightPos = bulletSpawn.position + Vector3.right * offset;
+
+            Vector3 leftDir = Vector3.up;
+            Vector3 rightDir = Vector3.up;
+
+            if (target != null)
+            {
+                leftDir = (target.position - leftPos).normalized;
+                rightDir = (target.position - rightPos).normalized;
+            }
+
+            SpawnBullet(focusBulletPrefab, leftPos, leftDir);
+            SpawnBullet(focusBulletPrefab, rightPos, rightDir);
         }
         else if (bulletPrefab != null)
         {
@@ -165,6 +178,29 @@ public class Player : MonoBehaviour
     {
         GameObject b = Instantiate(prefab, pos, Quaternion.identity);
         b.GetComponent<Bullet1>().direction = dir;
+    }
+
+    // ---------------- TARGETING ----------------
+    Transform FindClosestEnemy()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        if (enemies.Length == 0) return null;
+
+        Transform closest = null;
+        float minDist = Mathf.Infinity;
+        Vector3 pos = transform.position;
+
+        foreach (GameObject e in enemies)
+        {
+            float d = (e.transform.position - pos).sqrMagnitude;
+            if (d < minDist)
+            {
+                minDist = d;
+                closest = e.transform;
+            }
+        }
+
+        return closest;
     }
 
     // ---------------- PIXEL SNAP ----------------
