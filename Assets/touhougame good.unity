@@ -380,6 +380,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5062504598256767240, guid: f694130be3e3cf34aaaac6cfe2487571, type: 3}
+      propertyPath: ringSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5062504598256767240, guid: f694130be3e3cf34aaaac6cfe2487571, type: 3}
       propertyPath: aimedSpeed
       value: 5
       objectReference: {fileID: 0}
