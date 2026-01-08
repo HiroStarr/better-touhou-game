@@ -13,14 +13,18 @@ public class BossAttack : MonoBehaviour
 
     [Header("Boss Health")]
     public int maxHealth = 300;
-    private int currentHealth;
-    private bool isDead;
+    int currentHealth;
+    bool isDead;
 
     [Header("Ring Pattern")]
     public int ringBulletCount = 24;
     public float ringSpeed = 2.5f;
     public float ringFireRate = 0.25f;
     public float ringRotationSpeed = 10f;
+
+    [Header("Ring Burst")]
+    public int ringBurstCount = 3;
+    public float ringBurstPause = 1.5f;
 
     [Header("Rain Pattern")]
     public float rainFireRate = 0.05f;
@@ -31,59 +35,76 @@ public class BossAttack : MonoBehaviour
     public float aimedFireRate = 1.5f;
     public float aimedSpeed = 6f;
 
+    // ===== Internal state for burst logic =====
+    int ringBurstShotsLeft;
+    float ringBurstCooldown;
     float ringAngle;
 
     void Start()
     {
         currentHealth = maxHealth;
+        ringBurstShotsLeft = ringBurstCount;
+        ringBurstCooldown = 0f;
         StartCoroutine(PhaseController());
     }
 
+    // =========================
+    // PHASE SYSTEM
+    // =========================
     IEnumerator PhaseController()
     {
         while (!isDead)
         {
+            ResetRingBurst();
             yield return StartCoroutine(RingPhase(5f));
+
+            ResetRingBurst();
             yield return StartCoroutine(RingRainPhase(6f));
+
             yield return StartCoroutine(AimedPhase(3f));
         }
     }
 
+    void ResetRingBurst()
+    {
+        ringBurstShotsLeft = ringBurstCount;
+        ringBurstCooldown = 0f;
+    }
+
+    // =========================
+    // PHASES
+    // =========================
     IEnumerator RingPhase(float duration)
     {
         float timer = 0f;
+
         while (timer < duration && !isDead)
         {
-            FireRing();
-            yield return new WaitForSeconds(ringFireRate);
-            timer += ringFireRate;
+            UpdateRingBurst(Time.deltaTime);
+            timer += Time.deltaTime;
+            yield return null;
         }
     }
 
     IEnumerator RingRainPhase(float duration)
     {
-        float ringTimer = 0f;
         float rainTimer = 0f;
         float time = 0f;
 
         while (time < duration && !isDead)
         {
-            if (ringTimer <= 0f)
-            {
-                FireRing();
-                ringTimer = ringFireRate;
-            }
+            // Ring burst
+            UpdateRingBurst(Time.deltaTime);
 
+            // Rain bullets
             if (rainTimer <= 0f)
             {
                 FireRain();
                 rainTimer = rainFireRate;
             }
 
-            ringTimer -= Time.deltaTime;
             rainTimer -= Time.deltaTime;
             time += Time.deltaTime;
-
             yield return null;
         }
     }
@@ -91,6 +112,7 @@ public class BossAttack : MonoBehaviour
     IEnumerator AimedPhase(float duration)
     {
         float timer = 0f;
+
         while (timer < duration && !isDead)
         {
             FireAimedShot();
@@ -99,6 +121,34 @@ public class BossAttack : MonoBehaviour
         }
     }
 
+    // =========================
+    // BURST HELPER
+    // =========================
+    void UpdateRingBurst(float deltaTime)
+    {
+        if (ringBurstCooldown > 0f)
+        {
+            ringBurstCooldown -= deltaTime;
+            return;
+        }
+
+        FireRing();
+        ringBurstShotsLeft--;
+
+        if (ringBurstShotsLeft <= 0)
+        {
+            ringBurstShotsLeft = ringBurstCount;
+            ringBurstCooldown = ringBurstPause;
+        }
+        else
+        {
+            ringBurstCooldown = ringFireRate;
+        }
+    }
+
+    // =========================
+    // PATTERNS
+    // =========================
     void FireRing()
     {
         ringAngle += ringRotationSpeed;
@@ -136,6 +186,9 @@ public class BossAttack : MonoBehaviour
         b.GetComponent<Bullet>().velocity = dir * speed;
     }
 
+    // =========================
+    // DAMAGE / DEATH
+    // =========================
     public void TakeDamage(int damage)
     {
         if (isDead) return;

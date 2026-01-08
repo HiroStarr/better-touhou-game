@@ -2,10 +2,15 @@ using UnityEngine;
 
 public class PlayerBullet : MonoBehaviour
 {
-    public float speed = 10f;
+    public int damage = 1;
 
-    void Update()
+    void OnTriggerEnter2D(Collider2D other)
     {
-        
+        BossAttack boss = other.GetComponent<BossAttack>();
+        if (boss != null)
+        {
+            boss.TakeDamage(damage);
+            Destroy(gameObject);
+        }
     }
 }

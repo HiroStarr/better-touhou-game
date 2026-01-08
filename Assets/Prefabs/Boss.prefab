@@ -137,6 +137,7 @@ MonoBehaviour:
   ringBulletPrefab: {fileID: 774027899444371373, guid: 2e7c47d04d6e64b43b10981e42bbff79, type: 3}
   rainBulletPrefab: {fileID: 9072667694450103416, guid: 769c47fe835c03f488f581cfe9fe7bef, type: 3}
   aimedBulletPrefab: {fileID: 1794037983056166875, guid: 719aaf4dcfc04ef43a865dfaed4059b1, type: 3}
+  maxHealth: 300
   ringBulletCount: 23
   ringSpeed: 10
   ringFireRate: 0.2
