@@ -295,7 +295,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5400835748874321815, guid: 171cb24c8b29b504f988ebcda61c2643, type: 3}
       propertyPath: speed
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5400835748874321815, guid: 171cb24c8b29b504f988ebcda61c2643, type: 3}
       propertyPath: focusSpeed
@@ -319,7 +319,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8108993182706911033, guid: 171cb24c8b29b504f988ebcda61c2643, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -6.96
+      value: -7
       objectReference: {fileID: 0}
     - target: {fileID: 8108993182706911033, guid: 171cb24c8b29b504f988ebcda61c2643, type: 3}
       propertyPath: m_LocalPosition.z
@@ -385,7 +385,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5062504598256767240, guid: f694130be3e3cf34aaaac6cfe2487571, type: 3}
       propertyPath: aimedSpeed
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5062504598256767240, guid: f694130be3e3cf34aaaac6cfe2487571, type: 3}
       propertyPath: ringFireRate
@@ -409,7 +409,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5528226261032083338, guid: f694130be3e3cf34aaaac6cfe2487571, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.17
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5528226261032083338, guid: f694130be3e3cf34aaaac6cfe2487571, type: 3}
       propertyPath: m_LocalPosition.y
@@ -417,7 +417,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5528226261032083338, guid: f694130be3e3cf34aaaac6cfe2487571, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.024011966
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5528226261032083338, guid: f694130be3e3cf34aaaac6cfe2487571, type: 3}
       propertyPath: m_LocalRotation.w
