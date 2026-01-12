@@ -292,8 +292,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 054e3842f0e5d9240a127390925f01d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 7
-  focusSpeed: 5
+  speed: 12
+  focusSpeed: 4
   focusKey: 304
   idleFrames:
   - {fileID: 713450529, guid: 67ca5c7be18380d4cacd52e4a3695ea7, type: 3}
