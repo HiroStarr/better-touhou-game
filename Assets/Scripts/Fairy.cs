@@ -23,32 +23,31 @@ public class Fairy : MonoBehaviour
     public float stopTime = 1.5f;
 
     [Header("Curve In")]
-    public float curveStrength = 3f;
-
-    [Header("Shooting")]
-    public GameObject bulletPrefab;
-    public float fireRate = 1.5f;
+    public float curveStrength = 2f;
 
     [Header("Life")]
     public int hp = 3;
 
-    float fireTimer;
     float timer;
     float startX;
+    bool stopped;
+
+    Camera cam;
 
     void Start()
     {
         startX = transform.position.x;
+        cam = Camera.main;
     }
 
     void Update()
     {
         HandleMovement();
-        HandleShooting();
         CheckOffscreen();
     }
 
     // ---------------- MOVEMENT ----------------
+
     void HandleMovement()
     {
         switch (pattern)
@@ -88,16 +87,16 @@ public class Fairy : MonoBehaviour
 
     void MoveStopAndGo()
     {
-        if (transform.position.y > stopY)
+        if (!stopped && transform.position.y > stopY)
         {
             transform.position += Vector3.down * speed * Time.deltaTime;
+            return;
         }
-        else if (timer < stopTime)
-        {
-            timer += Time.deltaTime;
-            // pause
-        }
-        else
+
+        stopped = true;
+        timer += Time.deltaTime;
+
+        if (timer >= stopTime)
         {
             transform.position += Vector3.down * speed * Time.deltaTime;
         }
@@ -114,21 +113,8 @@ public class Fairy : MonoBehaviour
         transform.position += dir * speed * Time.deltaTime;
     }
 
-    // ---------------- SHOOTING ----------------
-    void HandleShooting()
-    {
-        if (bulletPrefab == null) return;
-
-        fireTimer += Time.deltaTime;
-        if (fireTimer >= fireRate)
-        {
-            fireTimer = 0f;
-            GameObject b = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-            b.GetComponent<EnemyBullet>().direction = Vector3.down;
-        }
-    }
-
     // ---------------- LIFE ----------------
+
     public void TakeDamage(int dmg)
     {
         hp -= dmg;
@@ -136,9 +122,17 @@ public class Fairy : MonoBehaviour
             Destroy(gameObject);
     }
 
+    // ---------------- CLEANUP ----------------
+
     void CheckOffscreen()
     {
-        
+        if (!cam) return;
+
+        Vector3 viewPos = cam.WorldToViewportPoint(transform.position);
+        if (viewPos.y < -0.1f || viewPos.x < -0.2f || viewPos.x > 1.2f)
+        {
+            Destroy(gameObject);
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)

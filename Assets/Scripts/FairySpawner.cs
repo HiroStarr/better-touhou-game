@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class FairySpawner : MonoBehaviour
 {
+    [Header("Spawn")]
     public GameObject fairyPrefab;
     public float spawnInterval = 1.2f;
     public float spawnXRange = 4f;
@@ -11,7 +12,7 @@ public class FairySpawner : MonoBehaviour
 
     void Update()
     {
-        if (fairyPrefab == null) return;
+        if (!fairyPrefab) return;
 
         timer += Time.deltaTime;
         if (timer >= spawnInterval)
@@ -28,10 +29,20 @@ public class FairySpawner : MonoBehaviour
 
         GameObject f = Instantiate(fairyPrefab, pos, Quaternion.identity);
 
-        // Pick a random movement pattern
-        Fairy.MovementPattern pattern =
-            (Fairy.MovementPattern)Random.Range(0, 4);
+        // -------- Movement Pattern --------
+        Fairy fairy = f.GetComponent<Fairy>();
+        if (fairy)
+        {
+            fairy.pattern = (Fairy.MovementPattern)
+                Random.Range(0, System.Enum.GetValues(typeof(Fairy.MovementPattern)).Length);
+        }
 
-        f.GetComponent<Fairy>().pattern = pattern;
+        // -------- Bullet Pattern --------
+        FairyShooter shooter = f.GetComponent<FairyShooter>();
+        if (shooter)
+        {
+            shooter.pattern = (FairyShooter.Pattern)
+                Random.Range(0, System.Enum.GetValues(typeof(FairyShooter.Pattern)).Length);
+        }
     }
 }

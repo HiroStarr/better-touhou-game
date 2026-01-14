@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class Player : MonoBehaviour
@@ -19,11 +20,16 @@ public class Player : MonoBehaviour
     public float hitboxFadeSpeed = 6f;
 
     [Header("Shooting")]
-    public GameObject bulletPrefab;          // unfocused bullet
-    public GameObject focusBulletPrefab;     // focused bullet
+    public GameObject bulletPrefab;          // unfocused bullets
+    public GameObject focusBulletPrefab;     // focused bullets
     public Transform bulletSpawn;
     public float normalFireRate = 10f;
     public float focusFireRate = 6f;
+
+    [Header("Life & Respawn")]
+    public int maxLives = 3;
+    public Vector3 respawnPosition = new Vector3(0f, -4f, 0f);
+    public float invincibilityTime = 2f;
 
     [Header("Pixel Perfect")]
     public float PPU = 16f;
@@ -39,10 +45,15 @@ public class Player : MonoBehaviour
     float animTimer;
     float fireTimer;
 
+    int currentLives;
+    bool isInvincible = false;
+
     void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
         currentAnim = idleFrames;
+
+        currentLives = maxLives;
 
         if (hitbox != null)
         {
@@ -146,14 +157,14 @@ public class Player : MonoBehaviour
         if (focusing && focusBulletPrefab != null)
         {
             float offset = 0.15f;
-            Transform target = FindClosestEnemy();
-
             Vector3 leftPos = bulletSpawn.position + Vector3.left * offset;
             Vector3 rightPos = bulletSpawn.position + Vector3.right * offset;
 
             Vector3 leftDir = Vector3.up;
             Vector3 rightDir = Vector3.up;
 
+            // Only home if enemy is in a 60° cone
+            Transform target = FindClosestEnemyInCone(60f);
             if (target != null)
             {
                 leftDir = (target.position - leftPos).normalized;
@@ -177,11 +188,15 @@ public class Player : MonoBehaviour
     void SpawnBullet(GameObject prefab, Vector3 pos, Vector3 dir)
     {
         GameObject b = Instantiate(prefab, pos, Quaternion.identity);
-        b.GetComponent<Bullet1>().direction = dir;
+        Bullet1 bullet = b.GetComponent<Bullet1>();
+        if (bullet != null)
+        {
+            bullet.direction = dir;
+        }
     }
 
     // ---------------- TARGETING ----------------
-    Transform FindClosestEnemy()
+    Transform FindClosestEnemyInCone(float coneAngle)
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         if (enemies.Length == 0) return null;
@@ -192,15 +207,86 @@ public class Player : MonoBehaviour
 
         foreach (GameObject e in enemies)
         {
-            float d = (e.transform.position - pos).sqrMagnitude;
-            if (d < minDist)
+            Vector3 toEnemy = e.transform.position - pos;
+            float angle = Vector3.Angle(Vector3.up, toEnemy); // 0° = straight up
+            if (angle <= coneAngle / 2f)
             {
-                minDist = d;
-                closest = e.transform;
+                float d = toEnemy.sqrMagnitude;
+                if (d < minDist)
+                {
+                    minDist = d;
+                    closest = e.transform;
+                }
             }
         }
 
         return closest;
+    }
+
+    // ---------------- DAMAGE & RESPAWN ----------------
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (isInvincible) return;
+
+        if (other.CompareTag("EnemyBullet"))
+        {
+            TakeDamage(1);
+            Destroy(other.gameObject);
+        }
+    }
+
+    void TakeDamage(int dmg)
+    {
+        if (isInvincible) return;
+
+        currentLives -= dmg;
+
+        if (currentLives <= 0)
+        {
+            Die();
+        }
+        else
+        {
+            RespawnPlayer();
+        }
+    }
+
+    void RespawnPlayer()
+    {
+        // Move immediately to respawn position
+        transform.position = respawnPosition;
+
+        // Start invincibility blinking
+        StartCoroutine(InvincibilityBlink());
+    }
+
+    System.Collections.IEnumerator InvincibilityBlink()
+    {
+        isInvincible = true;
+        float timer = 0f;
+        float blinkInterval = 0.1f;
+
+        while (timer < invincibilityTime)
+        {
+            sr.enabled = !sr.enabled;
+            if (hitboxSR != null) hitboxSR.enabled = sr.enabled;
+
+            timer += blinkInterval;
+            yield return new WaitForSeconds(blinkInterval);
+        }
+
+        sr.enabled = true;
+        if (hitboxSR != null) hitboxSR.enabled = true;
+
+        isInvincible = false;
+    }
+
+    void Die()
+    {
+        // Game Over
+        gameObject.SetActive(false);
+        Debug.Log("Game Over!");
+        // Optional: trigger Game Over UI
     }
 
     // ---------------- PIXEL SNAP ----------------

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4662499782690216443}
   - component: {fileID: 1319471070430521668}
+  - component: {fileID: 5459744711862863631}
   - component: {fileID: 8650489502211842405}
   - component: {fileID: 1620835732395232883}
   - component: {fileID: 5687618962172662951}
@@ -87,6 +88,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5459744711862863631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8882012177426748300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb7e415172869a8428b8d383178c9b93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pattern: 0
+  bulletPrefab: {fileID: 9072667694450103416, guid: 769c47fe835c03f488f581cfe9fe7bef, type: 3}
+  fireRate: 1
+  bulletSpeed: 4
+  bulletCount: 8
+  spreadAngle: 60
+  spiralSpeed: 120
 --- !u!114 &8650489502211842405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,8 +126,6 @@ MonoBehaviour:
   stopY: 2
   stopTime: 1.5
   curveStrength: 3
-  bulletPrefab: {fileID: 9072667694450103416, guid: 769c47fe835c03f488f581cfe9fe7bef, type: 3}
-  fireRate: 0.5
   hp: 10
 --- !u!114 &1620835732395232883
 MonoBehaviour:

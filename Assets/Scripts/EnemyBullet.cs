@@ -3,12 +3,15 @@ using UnityEngine;
 public class EnemyBullet : MonoBehaviour
 {
     public float speed = 4f;
-    public Vector3 direction = Vector3.down;
+    public Vector2 direction;
 
     void Update()
     {
-        transform.position += direction.normalized * speed * Time.deltaTime;
+        transform.position += (Vector3)(direction.normalized * speed * Time.deltaTime);
+    }
 
-       
+    void OnBecameInvisible()
+    {
+        Destroy(gameObject);
     }
 }
