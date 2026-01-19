@@ -134,20 +134,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8e991928c228c9428afa659c71609f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 4135973267457395416, guid: 171cb24c8b29b504f988ebcda61c2643, type: 3}
   ringBulletPrefab: {fileID: 774027899444371373, guid: 2e7c47d04d6e64b43b10981e42bbff79, type: 3}
   rainBulletPrefab: {fileID: 9072667694450103416, guid: 769c47fe835c03f488f581cfe9fe7bef, type: 3}
   aimedBulletPrefab: {fileID: 1794037983056166875, guid: 719aaf4dcfc04ef43a865dfaed4059b1, type: 3}
   maxHealth: 500
   ringBulletCount: 20
-  ringSpeed: 10
+  ringSpeed: 7
   ringFireRate: 0.1
   ringRotationSpeed: 100
-  ringBurstCount: 5
+  ringBurstCount: 3
   ringBurstPause: 1.5
   rainFireRate: 0.05
   rainSpeed: 3
-  rainSpread: 20
+  rainSpread: 10
   aimedFireRate: 0.3
   aimedSpeed: 7
 --- !u!50 &3988592796094508099

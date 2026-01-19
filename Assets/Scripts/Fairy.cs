@@ -18,9 +18,9 @@ public class Fairy : MonoBehaviour
     public float sineAmplitude = 1.5f;
     public float sineFrequency = 2f;
 
-    [Header("Stop & Go")]
-    public float stopY = 2f;
-    public float stopTime = 1.5f;
+    [Header("Stop & Go (Time Based)")]
+    public float moveTime = 1.5f;   // Move before stopping
+    public float stopTime = 1.5f;   // Time spent stopped
 
     [Header("Curve In")]
     public float curveStrength = 2f;
@@ -28,9 +28,15 @@ public class Fairy : MonoBehaviour
     [Header("Life")]
     public int hp = 3;
 
+    // ---------------- PRIVATE ----------------
+
     float timer;
     float startX;
-    bool stopped;
+
+    // Stop & Go state
+    float stopGoTimer;
+    bool isStopped;
+    bool resumed;
 
     Camera cam;
 
@@ -38,6 +44,15 @@ public class Fairy : MonoBehaviour
     {
         startX = transform.position.x;
         cam = Camera.main;
+    }
+
+    void OnEnable()
+    {
+        // Safety reset (important for pooling)
+        timer = 0f;
+        stopGoTimer = 0f;
+        isStopped = false;
+        resumed = false;
     }
 
     void Update()
@@ -87,19 +102,34 @@ public class Fairy : MonoBehaviour
 
     void MoveStopAndGo()
     {
-        if (!stopped && transform.position.y > stopY)
+        stopGoTimer += Time.deltaTime;
+
+        // Phase 1: Move
+        if (!isStopped)
         {
             transform.position += Vector3.down * speed * Time.deltaTime;
+
+            if (stopGoTimer >= moveTime)
+            {
+                isStopped = true;
+                stopGoTimer = 0f;
+            }
             return;
         }
 
-        stopped = true;
-        timer += Time.deltaTime;
-
-        if (timer >= stopTime)
+        // Phase 2: Stop
+        if (!resumed)
         {
-            transform.position += Vector3.down * speed * Time.deltaTime;
+            if (stopGoTimer >= stopTime)
+            {
+                resumed = true;
+                stopGoTimer = 0f;
+            }
+            return;
         }
+
+        // Phase 3: Resume moving
+        transform.position += Vector3.down * speed * Time.deltaTime;
     }
 
     void MoveCurveIn()

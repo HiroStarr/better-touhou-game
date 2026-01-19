@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6050885167469173648}
   - component: {fileID: 5963967626246015991}
-  - component: {fileID: 4445235548621461648}
   - component: {fileID: 762877286854375183}
   - component: {fileID: 185333307691755187}
+  - component: {fileID: 2513011115630092224}
   m_Layer: 0
   m_Name: PointBullet
   m_TagString: EnemyBullet
@@ -87,20 +87,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &4445235548621461648
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 774027899444371373}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93f6d83c5d68464449598dcbe6214cf8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0}
-  lifetime: 10
 --- !u!50 &762877286854375183
 Rigidbody2D:
   serializedVersion: 4
@@ -173,3 +159,17 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.24956036, y: 0.49336553}
   m_EdgeRadius: 0
+--- !u!114 &2513011115630092224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 774027899444371373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 187107b1b65e5d6408f685f9282bc9aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  direction: {x: 0, y: 0}
+  speed: 0

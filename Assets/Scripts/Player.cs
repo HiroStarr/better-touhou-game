@@ -31,28 +31,22 @@ public class Player : MonoBehaviour
     public Vector3 respawnPosition = new Vector3(0f, -4f, 0f);
     public float invincibilityTime = 2f;
 
-    [Header("Pixel Perfect")]
-    public float PPU = 16f;
-    public bool snapToPixels = true;
+    [HideInInspector] public bool isInvincible = false;
 
     // ---- private ----
-    SpriteRenderer sr;
-    SpriteRenderer hitboxSR;
-
-    Sprite[] currentAnim;
-    int frame;
-    int loopStart;
-    float animTimer;
-    float fireTimer;
-
-    int currentLives;
-    bool isInvincible = false;
+    private SpriteRenderer sr;
+    private SpriteRenderer hitboxSR;
+    private Sprite[] currentAnim;
+    private int frame;
+    private int loopStart;
+    private float animTimer;
+    private float fireTimer;
+    private int currentLives;
 
     void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
         currentAnim = idleFrames;
-
         currentLives = maxLives;
 
         if (hitbox != null)
@@ -61,7 +55,6 @@ public class Player : MonoBehaviour
             Color c = hitboxSR.color;
             c.a = 0f;
             hitboxSR.color = c;
-
             hitbox.transform.localScale = Vector3.one;
             hitbox.transform.localPosition = Vector3.zero;
         }
@@ -73,9 +66,6 @@ public class Player : MonoBehaviour
         Animate();
         FadeHitbox();
         ShootHandler();
-
-        if (snapToPixels)
-            SnapToPixels();
     }
 
     // ---------------- MOVEMENT ----------------
@@ -84,8 +74,8 @@ public class Player : MonoBehaviour
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
         bool focusing = Input.GetKey(focusKey);
-
         float curSpeed = focusing ? focusSpeed : speed;
+
         Vector3 move = new Vector3(h, v, 0).normalized;
         transform.position += move * curSpeed * Time.deltaTime;
     }
@@ -142,7 +132,6 @@ public class Player : MonoBehaviour
 
         bool focusing = Input.GetKey(focusKey);
         float rate = focusing ? focusFireRate : normalFireRate;
-
         fireTimer += Time.deltaTime;
 
         if (Input.GetKey(KeyCode.Z) && fireTimer >= 1f / rate)
@@ -154,17 +143,19 @@ public class Player : MonoBehaviour
 
     void Shoot(bool focusing)
     {
+        if (bulletPrefab == null) return;
+
         if (focusing && focusBulletPrefab != null)
         {
             float offset = 0.15f;
             Vector3 leftPos = bulletSpawn.position + Vector3.left * offset;
             Vector3 rightPos = bulletSpawn.position + Vector3.right * offset;
 
+            // Track closest enemy in 60° cone
+            Transform target = FindClosestEnemyInCone(60f);
+
             Vector3 leftDir = Vector3.up;
             Vector3 rightDir = Vector3.up;
-
-            // Only home if enemy is in a 60° cone
-            Transform target = FindClosestEnemyInCone(60f);
             if (target != null)
             {
                 leftDir = (target.position - leftPos).normalized;
@@ -174,7 +165,7 @@ public class Player : MonoBehaviour
             SpawnBullet(focusBulletPrefab, leftPos, leftDir);
             SpawnBullet(focusBulletPrefab, rightPos, rightDir);
         }
-        else if (bulletPrefab != null)
+        else
         {
             float[] angles = { -20f, -10f, 0f, 10f, 20f };
             foreach (float a in angles)
@@ -192,6 +183,7 @@ public class Player : MonoBehaviour
         if (bullet != null)
         {
             bullet.direction = dir;
+            bullet.speed = 10f; // player bullet speed
         }
     }
 
@@ -208,7 +200,7 @@ public class Player : MonoBehaviour
         foreach (GameObject e in enemies)
         {
             Vector3 toEnemy = e.transform.position - pos;
-            float angle = Vector3.Angle(Vector3.up, toEnemy); // 0° = straight up
+            float angle = Vector3.Angle(Vector3.up, toEnemy);
             if (angle <= coneAngle / 2f)
             {
                 float d = toEnemy.sqrMagnitude;
@@ -235,7 +227,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void TakeDamage(int dmg)
+    public void TakeDamage(int dmg)
     {
         if (isInvincible) return;
 
@@ -253,14 +245,11 @@ public class Player : MonoBehaviour
 
     void RespawnPlayer()
     {
-        // Move immediately to respawn position
         transform.position = respawnPosition;
-
-        // Start invincibility blinking
         StartCoroutine(InvincibilityBlink());
     }
 
-    System.Collections.IEnumerator InvincibilityBlink()
+    IEnumerator InvincibilityBlink()
     {
         isInvincible = true;
         float timer = 0f;
@@ -277,24 +266,12 @@ public class Player : MonoBehaviour
 
         sr.enabled = true;
         if (hitboxSR != null) hitboxSR.enabled = true;
-
         isInvincible = false;
     }
 
     void Die()
     {
-        // Game Over
         gameObject.SetActive(false);
         Debug.Log("Game Over!");
-        // Optional: trigger Game Over UI
-    }
-
-    // ---------------- PIXEL SNAP ----------------
-    void SnapToPixels()
-    {
-        Vector3 p = transform.position;
-        p.x = Mathf.Round(p.x * PPU) / PPU;
-        p.y = Mathf.Round(p.y * PPU) / PPU;
-        transform.position = p;
     }
 }

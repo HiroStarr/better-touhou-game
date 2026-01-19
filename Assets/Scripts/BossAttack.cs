@@ -45,6 +45,13 @@ public class BossAttack : MonoBehaviour
         currentHealth = maxHealth;
         ringBurstShotsLeft = ringBurstCount;
         ringBurstCooldown = 0f;
+
+        if (!player)
+        {
+            GameObject p = GameObject.FindGameObjectWithTag("Player");
+            if (p) player = p.transform;
+        }
+
         StartCoroutine(PhaseController());
     }
 
@@ -166,15 +173,27 @@ public class BossAttack : MonoBehaviour
         Vector3 spawnPos = new Vector3(x, transform.position.y, 0f);
 
         GameObject b = Instantiate(rainBulletPrefab, spawnPos, Quaternion.identity);
-        b.GetComponent<Bullet>().velocity = Vector2.down * rainSpeed;
+        EnemyBullet bullet = b.GetComponent<EnemyBullet>();
+        if (bullet != null)
+        {
+            bullet.direction = Vector2.down;
+            bullet.speed = rainSpeed;
+        }
     }
 
     void FireAimedShot()
     {
+        if (!player) return;
+
         Vector2 dir = (player.position - transform.position).normalized;
 
         GameObject b = Instantiate(aimedBulletPrefab, transform.position, Quaternion.identity);
-        b.GetComponent<Bullet>().velocity = dir * aimedSpeed;
+        EnemyBullet bullet = b.GetComponent<EnemyBullet>();
+        if (bullet != null)
+        {
+            bullet.direction = dir;
+            bullet.speed = aimedSpeed;
+        }
     }
 
     void SpawnBullet(GameObject prefab, float angleDeg, float speed)
@@ -183,7 +202,12 @@ public class BossAttack : MonoBehaviour
         Vector2 dir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
 
         GameObject b = Instantiate(prefab, transform.position, Quaternion.identity);
-        b.GetComponent<Bullet>().velocity = dir * speed;
+        EnemyBullet bullet = b.GetComponent<EnemyBullet>();
+        if (bullet != null)
+        {
+            bullet.direction = dir;
+            bullet.speed = speed;
+        }
     }
 
     // =========================

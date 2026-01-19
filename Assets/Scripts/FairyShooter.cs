@@ -56,31 +56,16 @@ public class FairyShooter : MonoBehaviour
     {
         switch (pattern)
         {
-            case Pattern.Spread:
-                FireSpread();
-                break;
-
-            case Pattern.Circle:
-                FireCircle();
-                break;
-
-            case Pattern.Spiral:
-                FireSpiral();
-                break;
-
-            case Pattern.Aimed:
-                FireAimed();
-                break;
-
-            case Pattern.Flower:
-                FireFlower();
-                break;
+            case Pattern.Spread: FireSpread(); break;
+            case Pattern.Circle: FireCircle(); break;
+            case Pattern.Spiral: FireSpiral(); break;
+            case Pattern.Aimed: FireAimed(); break;
+            case Pattern.Flower: FireFlower(); break;
         }
     }
 
     // ---------------- PATTERNS ----------------
 
-    // Downward-centered fan
     void FireSpread()
     {
         if (bulletCount <= 1)
@@ -99,7 +84,6 @@ public class FairyShooter : MonoBehaviour
         }
     }
 
-    // Single static ring
     void FireCircle()
     {
         for (int i = 0; i < bulletCount; i++)
@@ -109,22 +93,18 @@ public class FairyShooter : MonoBehaviour
         }
     }
 
-    // Continuous rotating stream
     void FireSpiral()
     {
         SpawnBullet(AngleToDir(angle));
     }
 
-    // Aimed directly at player
     void FireAimed()
     {
         if (!player) return;
-
         Vector2 dir = (player.position - transform.position).normalized;
         SpawnBullet(dir);
     }
 
-    // Repeated rotating rings (Touhou flower)
     void FireFlower()
     {
         for (int i = 0; i < bulletCount; i++)
@@ -140,8 +120,11 @@ public class FairyShooter : MonoBehaviour
     {
         GameObject b = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
         EnemyBullet bullet = b.GetComponent<EnemyBullet>();
-        bullet.direction = dir;
-        bullet.speed = bulletSpeed;
+        if (bullet != null)
+        {
+            bullet.direction = dir;   // Use direction from EnemyBullet.cs
+            bullet.speed = bulletSpeed;
+        }
     }
 
     // 0° = DOWN (vertical shmup standard)

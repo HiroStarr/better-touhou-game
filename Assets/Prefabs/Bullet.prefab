@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: -8606801798169640506}
   - component: {fileID: 3933651182836988852}
   - component: {fileID: -2173301284857465931}
-  - component: {fileID: 7948002773463908600}
   - component: {fileID: -3147894913422106235}
   m_Layer: 0
   m_Name: Bullet
@@ -161,19 +160,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   padding: 1
---- !u!114 &7948002773463908600
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 609449931594769777}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a2a1db3fccbace4f9761c773f836de2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 1
 --- !u!50 &-3147894913422106235
 Rigidbody2D:
   serializedVersion: 4
