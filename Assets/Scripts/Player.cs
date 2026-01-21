@@ -15,21 +15,29 @@ public class Player : MonoBehaviour
     public Sprite[] leanRightFrames;
     public float frameRate = 12f;
 
-    [Header("Focus Hitbox")]
-    public GameObject hitbox;
-    public float hitboxFadeSpeed = 6f;
-
     [Header("Shooting")]
-    public GameObject bulletPrefab;          // unfocused bullets
-    public GameObject focusBulletPrefab;     // focused bullets
+    public GameObject bulletPrefab;
+    public GameObject focusBulletPrefab;
     public Transform bulletSpawn;
     public float normalFireRate = 10f;
     public float focusFireRate = 6f;
+    public float normalBulletSpeed = 10f;
+    public float focusBulletSpeed = 14f;
 
     [Header("Life & Respawn")]
     public int maxLives = 3;
     public Vector3 respawnPosition = new Vector3(0f, -4f, 0f);
     public float invincibilityTime = 2f;
+
+    [Header("Bomb")]
+    public KeyCode bombKey = KeyCode.X;
+    public GameObject bombExplosionPrefab;
+    public float bombCameraShakeDuration = 0.25f;
+    public float bombCameraShakeMagnitude = 0.5f;
+
+    [Header("Focus Hitbox")]
+    public GameObject hitbox;
+    public float hitboxFadeSpeed = 6f;
 
     [HideInInspector] public bool isInvincible = false;
 
@@ -66,6 +74,7 @@ public class Player : MonoBehaviour
         Animate();
         FadeHitbox();
         ShootHandler();
+        BombHandler();
     }
 
     // ---------------- MOVEMENT ----------------
@@ -143,27 +152,13 @@ public class Player : MonoBehaviour
 
     void Shoot(bool focusing)
     {
-        if (bulletPrefab == null) return;
-
         if (focusing && focusBulletPrefab != null)
         {
             float offset = 0.15f;
             Vector3 leftPos = bulletSpawn.position + Vector3.left * offset;
             Vector3 rightPos = bulletSpawn.position + Vector3.right * offset;
-
-            // Track closest enemy in 60° cone
-            Transform target = FindClosestEnemyInCone(60f);
-
-            Vector3 leftDir = Vector3.up;
-            Vector3 rightDir = Vector3.up;
-            if (target != null)
-            {
-                leftDir = (target.position - leftPos).normalized;
-                rightDir = (target.position - rightPos).normalized;
-            }
-
-            SpawnBullet(focusBulletPrefab, leftPos, leftDir);
-            SpawnBullet(focusBulletPrefab, rightPos, rightDir);
+            SpawnBullet(focusBulletPrefab, leftPos, Vector3.up, focusBulletSpeed);
+            SpawnBullet(focusBulletPrefab, rightPos, Vector3.up, focusBulletSpeed);
         }
         else
         {
@@ -171,62 +166,57 @@ public class Player : MonoBehaviour
             foreach (float a in angles)
             {
                 Vector3 dir = Quaternion.Euler(0, 0, a) * Vector3.up;
-                SpawnBullet(bulletPrefab, bulletSpawn.position, dir);
+                SpawnBullet(bulletPrefab, bulletSpawn.position, dir, normalBulletSpeed);
             }
         }
     }
 
-    void SpawnBullet(GameObject prefab, Vector3 pos, Vector3 dir)
+    void SpawnBullet(GameObject prefab, Vector3 pos, Vector3 dir, float speed)
     {
         GameObject b = Instantiate(prefab, pos, Quaternion.identity);
         Bullet1 bullet = b.GetComponent<Bullet1>();
         if (bullet != null)
         {
             bullet.direction = dir;
-            bullet.speed = 10f; // player bullet speed
+            bullet.speed = speed;
         }
     }
 
-    // ---------------- TARGETING ----------------
-    Transform FindClosestEnemyInCone(float coneAngle)
+    // ---------------- BOMB ----------------
+    void BombHandler()
     {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        if (enemies.Length == 0) return null;
-
-        Transform closest = null;
-        float minDist = Mathf.Infinity;
-        Vector3 pos = transform.position;
-
-        foreach (GameObject e in enemies)
+        if (Input.GetKeyDown(bombKey))
         {
-            Vector3 toEnemy = e.transform.position - pos;
-            float angle = Vector3.Angle(Vector3.up, toEnemy);
-            if (angle <= coneAngle / 2f)
-            {
-                float d = toEnemy.sqrMagnitude;
-                if (d < minDist)
-                {
-                    minDist = d;
-                    closest = e.transform;
-                }
-            }
-        }
+            Vector3 bombPos = transform.position;
 
-        return closest;
+            if (bombExplosionPrefab != null)
+                Instantiate(bombExplosionPrefab, bombPos, Quaternion.identity);
+
+            if (CameraShake.Instance != null)
+                CameraShake.Instance.ShakeCamera(0.25f, 0.5f);
+
+            StartCoroutine(BombInvincibility());
+        }
     }
 
-    // ---------------- DAMAGE & RESPAWN ----------------
-    void OnTriggerEnter2D(Collider2D other)
+    IEnumerator BombInvincibility()
     {
-        if (isInvincible) return;
+        isInvincible = true;
+        float timer = 0f;
+        float blinkInterval = 0.1f;
 
-        if (other.CompareTag("EnemyBullet"))
+        while (timer < invincibilityTime)
         {
-            TakeDamage(1);
-            Destroy(other.gameObject);
+            sr.enabled = !sr.enabled;
+            timer += blinkInterval;
+            yield return new WaitForSeconds(blinkInterval);
         }
+
+        sr.enabled = true;
+        isInvincible = false;
     }
 
+    // ---------------- DAMAGE ----------------
     public void TakeDamage(int dmg)
     {
         if (isInvincible) return;
@@ -234,13 +224,9 @@ public class Player : MonoBehaviour
         currentLives -= dmg;
 
         if (currentLives <= 0)
-        {
             Die();
-        }
         else
-        {
             RespawnPlayer();
-        }
     }
 
     void RespawnPlayer()
@@ -258,14 +244,11 @@ public class Player : MonoBehaviour
         while (timer < invincibilityTime)
         {
             sr.enabled = !sr.enabled;
-            if (hitboxSR != null) hitboxSR.enabled = sr.enabled;
-
             timer += blinkInterval;
             yield return new WaitForSeconds(blinkInterval);
         }
 
         sr.enabled = true;
-        if (hitboxSR != null) hitboxSR.enabled = true;
         isInvincible = false;
     }
 

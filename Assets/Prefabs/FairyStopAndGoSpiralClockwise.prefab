@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3405375550900156964}
   - component: {fileID: 4524468999737567487}
   - component: {fileID: 6627123070649409811}
+  - component: {fileID: 8922376481989859426}
   m_Layer: 0
   m_Name: FairyStopAndGoSpiralClockwise
   m_TagString: Enemy
@@ -126,7 +127,6 @@ MonoBehaviour:
   moveTime: 1.5
   stopTime: 100
   curveStrength: 3
-  hp: 20
 --- !u!114 &4524468999737567487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,3 +175,18 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.0625
+--- !u!114 &8922376481989859426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5929307189739682685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7eb7014ba05094ebc3957e815aec6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHP: 50
+  isBoss: 0
+  deathEffect: {fileID: 0}

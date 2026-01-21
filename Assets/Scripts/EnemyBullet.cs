@@ -2,26 +2,17 @@ using UnityEngine;
 
 public class EnemyBullet : MonoBehaviour
 {
-    public float speed = 4f;
-    public Vector2 direction = Vector2.down;
+    public Vector3 direction = Vector3.down;
+    public float speed = 5f;
 
-    void Update()
-    {
-        transform.position += (Vector3)(direction.normalized * speed * Time.deltaTime);
-    }
-
-    // Destroy bullet when off-screen
-    void OnBecameInvisible()
-    {
-        Destroy(gameObject);
-    }
+    void Update() => transform.position += direction * speed * Time.deltaTime;
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Player player = other.GetComponent<Player>();
-        if (player != null && !player.isInvincible)
+        if (other.CompareTag("Player"))
         {
-            player.TakeDamage(1); // Deal damage
+            Player p = other.GetComponent<Player>();
+            if (p != null) p.TakeDamage(1);
             Destroy(gameObject);
         }
     }

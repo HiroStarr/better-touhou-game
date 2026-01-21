@@ -270,6 +270,7 @@ GameObject:
   - component: {fileID: 561344573}
   - component: {fileID: 561344572}
   - component: {fileID: 561344575}
+  - component: {fileID: 561344576}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -395,6 +396,18 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!114 &561344576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 561344571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be5f1f6b6fa00174eb0ddea2c57d32fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &922346695
 GameObject:
   m_ObjectHideFlags: 0
@@ -736,6 +749,34 @@ PrefabInstance:
     - target: {fileID: 4332723773023617413, guid: 171cb24c8b29b504f988ebcda61c2643, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518767056260785718, guid: 171cb24c8b29b504f988ebcda61c2643, type: 3}
+      propertyPath: bombDamage
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518767056260785718, guid: 171cb24c8b29b504f988ebcda61c2643, type: 3}
+      propertyPath: bombRadius
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518767056260785718, guid: 171cb24c8b29b504f988ebcda61c2643, type: 3}
+      propertyPath: focusBulletSpeed
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518767056260785718, guid: 171cb24c8b29b504f988ebcda61c2643, type: 3}
+      propertyPath: normalBulletSpeed
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518767056260785718, guid: 171cb24c8b29b504f988ebcda61c2643, type: 3}
+      propertyPath: bombExplosionPrefab
+      value: 
+      objectReference: {fileID: 1055550854958826020, guid: c68e2850bbbfbf14ab59b9907eaffea8, type: 3}
+    - target: {fileID: 4518767056260785718, guid: 171cb24c8b29b504f988ebcda61c2643, type: 3}
+      propertyPath: bombCameraShakeDuration
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4518767056260785718, guid: 171cb24c8b29b504f988ebcda61c2643, type: 3}
+      propertyPath: bombCameraShakeMagnitude
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

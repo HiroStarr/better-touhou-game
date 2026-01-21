@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7964711460060332705}
   - component: {fileID: 3445296486836393739}
   - component: {fileID: 3988592796094508099}
+  - component: {fileID: 3842245472674673531}
   m_Layer: 8
   m_Name: Boss 2
   m_TagString: Enemy
@@ -138,7 +139,6 @@ MonoBehaviour:
   ringBulletPrefab: {fileID: 774027899444371373, guid: 2e7c47d04d6e64b43b10981e42bbff79, type: 3}
   rainBulletPrefab: {fileID: 9072667694450103416, guid: 769c47fe835c03f488f581cfe9fe7bef, type: 3}
   aimedBulletPrefab: {fileID: 1794037983056166875, guid: 719aaf4dcfc04ef43a865dfaed4059b1, type: 3}
-  maxHealth: 500
   ringBulletCount: 20
   ringSpeed: 7
   ringFireRate: 0.1
@@ -177,3 +177,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &3842245472674673531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7457523408641432141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7eb7014ba05094ebc3957e815aec6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHP: 1000
+  isBoss: 1
+  deathEffect: {fileID: 0}

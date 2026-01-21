@@ -2,27 +2,17 @@ using UnityEngine;
 
 public class Bullet1 : MonoBehaviour
 {
-    public float speed = 10f;
     public Vector3 direction = Vector3.up;
-    public int damage = 1;
+    public float speed = 10f;
 
-    void Update()
-    {
-        // Move the bullet
-        transform.position += direction.normalized * speed * Time.deltaTime;
-
-        // Destroy if off-screen
-        if (Mathf.Abs(transform.position.y) > 20f || Mathf.Abs(transform.position.x) > 20f)
-            Destroy(gameObject);
-    }
+    void Update() => transform.position += direction * speed * Time.deltaTime;
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        // Damage bosses
-        BossAttack boss = other.GetComponent<BossAttack>();
-        if (boss != null)
+        Enemy enemy = other.GetComponent<Enemy>();
+        if (enemy != null)
         {
-            boss.TakeDamage(damage);
+            enemy.TakeDamage(1);
             Destroy(gameObject);
         }
     }
