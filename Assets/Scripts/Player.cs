@@ -34,6 +34,7 @@ public class Player : MonoBehaviour
     public GameObject bombExplosionPrefab;
     public float bombCameraShakeDuration = 0.25f;
     public float bombCameraShakeMagnitude = 0.5f;
+    public int bombsPerLife = 3;
 
     [Header("Focus Hitbox")]
     public GameObject hitbox;
@@ -50,12 +51,14 @@ public class Player : MonoBehaviour
     private float animTimer;
     private float fireTimer;
     private int currentLives;
+    private int currentBombs;
 
     void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
         currentAnim = idleFrames;
         currentLives = maxLives;
+        currentBombs = bombsPerLife;
 
         if (hitbox != null)
         {
@@ -185,15 +188,17 @@ public class Player : MonoBehaviour
     // ---------------- BOMB ----------------
     void BombHandler()
     {
-        if (Input.GetKeyDown(bombKey))
+        if (Input.GetKeyDown(bombKey) && currentBombs > 0)
         {
+            currentBombs--;
+
             Vector3 bombPos = transform.position;
 
             if (bombExplosionPrefab != null)
                 Instantiate(bombExplosionPrefab, bombPos, Quaternion.identity);
 
             if (CameraShake.Instance != null)
-                CameraShake.Instance.ShakeCamera(0.25f, 0.5f);
+                CameraShake.Instance.ShakeCamera(bombCameraShakeDuration, bombCameraShakeMagnitude);
 
             StartCoroutine(BombInvincibility());
         }
@@ -232,6 +237,7 @@ public class Player : MonoBehaviour
     void RespawnPlayer()
     {
         transform.position = respawnPosition;
+        currentBombs = bombsPerLife;
         StartCoroutine(InvincibilityBlink());
     }
 
