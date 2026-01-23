@@ -162,18 +162,29 @@ MonoBehaviour:
   - {fileID: 68544216, guid: 67ca5c7be18380d4cacd52e4a3695ea7, type: 3}
   - {fileID: -943467879, guid: 67ca5c7be18380d4cacd52e4a3695ea7, type: 3}
   frameRate: 12
-  hitbox: {fileID: 8362470420395697899}
-  hitboxFadeSpeed: 2
   bulletPrefab: {fileID: 609449931594769777, guid: 9a70c5691cf678b42877230d9cd8809b, type: 3}
   focusBulletPrefab: {fileID: 8043232585383188543, guid: b9469b87d15ad0046971ebb5e9a3b1f9, type: 3}
   bulletSpawn: {fileID: 8789565932692351696}
   normalFireRate: 10
   focusFireRate: 15
+  normalBulletSpeed: 20
+  focusBulletSpeed: 20
   maxLives: 5
   respawnPosition: {x: 0, y: -7, z: 0}
   invincibilityTime: 1
-  PPU: 16
-  snapToPixels: 0
+  bombKey: 120
+  bombExplosionPrefab: {fileID: 1055550854958826020, guid: c68e2850bbbfbf14ab59b9907eaffea8, type: 3}
+  bombCameraShakeDuration: 5
+  bombCameraShakeMagnitude: 0.5
+  bombsPerLife: 3
+  deathbombWindow: 0.3
+  deathStretchAmount: 10
+  deathSquashAmount: 0.6
+  deathDuration: 1
+  deathPopHeight: 0.2
+  hitbox: {fileID: 8362470420395697899}
+  hitboxFadeSpeed: 2
+  isInvincible: 0
 --- !u!58 &914333313504426237
 CircleCollider2D:
   m_ObjectHideFlags: 0

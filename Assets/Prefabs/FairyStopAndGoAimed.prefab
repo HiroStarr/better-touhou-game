@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7457523408641432141
+--- !u!1 &9168662666815920046
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,41 +8,42 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1267573381334408482}
-  - component: {fileID: 6185466810430529615}
-  - component: {fileID: 7964711460060332705}
-  - component: {fileID: 3445296486836393739}
-  - component: {fileID: 3988592796094508099}
-  - component: {fileID: 3842245472674673531}
-  m_Layer: 8
-  m_Name: Boss 2
+  - component: {fileID: 2382890918332753757}
+  - component: {fileID: 6270436363111555663}
+  - component: {fileID: 5016096502583055952}
+  - component: {fileID: 3239632565322978796}
+  - component: {fileID: 4714078928968786916}
+  - component: {fileID: 4846435658467242108}
+  - component: {fileID: 6260866844146254210}
+  m_Layer: 0
+  m_Name: FairyStopAndGoAimed
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1267573381334408482
+--- !u!4 &2382890918332753757
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7457523408641432141}
+  m_GameObject: {fileID: 9168662666815920046}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.03, y: 7.59, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
+  m_LocalPosition: {x: -1.2, y: 8.82, z: -0.024011966}
+  m_LocalScale: {x: 10, y: 10, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &6185466810430529615
+--- !u!212 &6270436363111555663
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7457523408641432141}
+  m_GameObject: {fileID: 9168662666815920046}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -77,7 +78,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 22d3fdba633371d4ba0a609e3a0d1595, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cec4bced05e7ee84aa8d62dacce2fb8c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -88,13 +89,64 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!58 &7964711460060332705
+--- !u!114 &5016096502583055952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9168662666815920046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb7e415172869a8428b8d383178c9b93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pattern: 3
+  bulletPrefab: {fileID: 9072667694450103416, guid: 769c47fe835c03f488f581cfe9fe7bef, type: 3}
+  fireRate: 0.1
+  bulletSpeed: 8
+  bulletCount: 22
+  spreadAngle: 60
+  spiralSpeed: 320
+--- !u!114 &3239632565322978796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9168662666815920046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0025ad606a6c75a459a1d509c4654bf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pattern: 2
+  speed: 5
+  sineAmplitude: 1.5
+  sineFrequency: 20
+  moveTime: 1.5
+  stopTime: 100
+  curveStrength: 3
+--- !u!114 &4714078928968786916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9168662666815920046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43e0df86b97b6fa43a7bf7c3ee4a68fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  padding: 1
+--- !u!58 &4846435658467242108
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7457523408641432141}
+  m_GameObject: {fileID: 9168662666815920046}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -117,78 +169,24 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.8
---- !u!114 &3445296486836393739
+  m_Radius: 0.0625
+--- !u!114 &6260866844146254210
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7457523408641432141}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8e991928c228c9428afa659c71609f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 4135973267457395416, guid: 171cb24c8b29b504f988ebcda61c2643, type: 3}
-  ringBulletPrefab: {fileID: 774027899444371373, guid: 2e7c47d04d6e64b43b10981e42bbff79, type: 3}
-  rainBulletPrefab: {fileID: 9072667694450103416, guid: 769c47fe835c03f488f581cfe9fe7bef, type: 3}
-  aimedBulletPrefab: {fileID: 1794037983056166875, guid: 719aaf4dcfc04ef43a865dfaed4059b1, type: 3}
-  ringBulletCount: 20
-  ringSpeed: 7
-  ringFireRate: 0.1
-  ringRotationSpeed: 100
-  ringBurstCount: 3
-  ringBurstPause: 1.5
-  rainFireRate: 0.05
-  rainSpeed: 3
-  rainSpread: 10
-  aimedFireRate: 0.3
-  aimedSpeed: 7
---- !u!50 &3988592796094508099
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7457523408641432141}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 1
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
---- !u!114 &3842245472674673531
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7457523408641432141}
+  m_GameObject: {fileID: 9168662666815920046}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7eb7014ba05094ebc3957e815aec6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 1000
-  isBoss: 1
-  deathEffect: {fileID: 7381761918312056934, guid: 362520c74de4fe74c9e41b4a67425cee, type: 3}
+  maxHP: 50
+  isBoss: 0
+  deathEffect: {fileID: 8113764796715364595, guid: f42bfed0e7db03841941211ec222fab9, type: 3}

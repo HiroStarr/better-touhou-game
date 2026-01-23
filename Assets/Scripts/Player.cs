@@ -36,6 +36,15 @@ public class Player : MonoBehaviour
     public float bombCameraShakeMagnitude = 0.5f;
     public int bombsPerLife = 3;
 
+    [Header("Deathbomb")]
+    public float deathbombWindow = 0.25f;
+
+    [Header("Death Visual")]
+    public float deathStretchAmount = 2f;  // Y multiplier
+    public float deathSquashAmount = 0.5f; // X multiplier
+    public float deathDuration = 0.3f;     // duration of fade/stretch
+    public float deathPopHeight = 0.2f;    // upward pop
+
     [Header("Focus Hitbox")]
     public GameObject hitbox;
     public float hitboxFadeSpeed = 6f;
@@ -52,6 +61,8 @@ public class Player : MonoBehaviour
     private float fireTimer;
     private int currentLives;
     private int currentBombs;
+    private bool deathbombActive;
+    private bool isDead = false;
 
     void Awake()
     {
@@ -66,13 +77,13 @@ public class Player : MonoBehaviour
             Color c = hitboxSR.color;
             c.a = 0f;
             hitboxSR.color = c;
-            hitbox.transform.localScale = Vector3.one;
-            hitbox.transform.localPosition = Vector3.zero;
         }
     }
 
     void Update()
     {
+        if (isDead) return; // stop everything if dead
+
         Move();
         Animate();
         FadeHitbox();
@@ -85,8 +96,7 @@ public class Player : MonoBehaviour
     {
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
-        bool focusing = Input.GetKey(focusKey);
-        float curSpeed = focusing ? focusSpeed : speed;
+        float curSpeed = Input.GetKey(focusKey) ? focusSpeed : speed;
 
         Vector3 move = new Vector3(h, v, 0).normalized;
         transform.position += move * curSpeed * Time.deltaTime;
@@ -96,10 +106,11 @@ public class Player : MonoBehaviour
     void Animate()
     {
         float h = Input.GetAxisRaw("Horizontal");
+
         Sprite[] target =
             h < -0.1f ? leanLeftFrames :
             h > 0.1f ? leanRightFrames :
-                        idleFrames;
+            idleFrames;
 
         int targetLoop = (target == idleFrames) ? 0 : Mathf.Max(0, target.Length - 4);
 
@@ -129,9 +140,7 @@ public class Player : MonoBehaviour
     {
         if (hitboxSR == null) return;
 
-        bool focusing = Input.GetKey(focusKey);
-        float targetA = focusing ? 1f : 0f;
-
+        float targetA = Input.GetKey(focusKey) ? 1f : 0f;
         Color c = hitboxSR.color;
         c.a = Mathf.MoveTowards(c.a, targetA, hitboxFadeSpeed * Time.deltaTime);
         hitboxSR.color = c;
@@ -158,10 +167,8 @@ public class Player : MonoBehaviour
         if (focusing && focusBulletPrefab != null)
         {
             float offset = 0.15f;
-            Vector3 leftPos = bulletSpawn.position + Vector3.left * offset;
-            Vector3 rightPos = bulletSpawn.position + Vector3.right * offset;
-            SpawnBullet(focusBulletPrefab, leftPos, Vector3.up, focusBulletSpeed);
-            SpawnBullet(focusBulletPrefab, rightPos, Vector3.up, focusBulletSpeed);
+            SpawnBullet(focusBulletPrefab, bulletSpawn.position + Vector3.left * offset, Vector3.up, focusBulletSpeed);
+            SpawnBullet(focusBulletPrefab, bulletSpawn.position + Vector3.right * offset, Vector3.up, focusBulletSpeed);
         }
         else
         {
@@ -185,46 +192,39 @@ public class Player : MonoBehaviour
         }
     }
 
-    // ---------------- BOMB ----------------
-    void BombHandler()
-    {
-        if (Input.GetKeyDown(bombKey) && currentBombs > 0)
-        {
-            currentBombs--;
-
-            Vector3 bombPos = transform.position;
-
-            if (bombExplosionPrefab != null)
-                Instantiate(bombExplosionPrefab, bombPos, Quaternion.identity);
-
-            if (CameraShake.Instance != null)
-                CameraShake.Instance.ShakeCamera(bombCameraShakeDuration, bombCameraShakeMagnitude);
-
-            StartCoroutine(BombInvincibility());
-        }
-    }
-
-    IEnumerator BombInvincibility()
-    {
-        isInvincible = true;
-        float timer = 0f;
-        float blinkInterval = 0.1f;
-
-        while (timer < invincibilityTime)
-        {
-            sr.enabled = !sr.enabled;
-            timer += blinkInterval;
-            yield return new WaitForSeconds(blinkInterval);
-        }
-
-        sr.enabled = true;
-        isInvincible = false;
-    }
-
     // ---------------- DAMAGE ----------------
     public void TakeDamage(int dmg)
     {
-        if (isInvincible) return;
+        if (isInvincible || deathbombActive || isDead)
+            return;
+
+        StartCoroutine(DeathbombRoutine(dmg));
+    }
+
+    IEnumerator DeathbombRoutine(int dmg)
+    {
+        deathbombActive = true;
+
+        if (HitFlash.Instance != null)
+            HitFlash.Instance.Flash(0.05f, 0.2f); // short red flash
+
+        float timer = 0f;
+        while (timer < deathbombWindow)
+        {
+            if (Input.GetKeyDown(bombKey) && currentBombs > 0)
+            {
+                UseBomb();
+                deathbombActive = false;
+                yield break;
+            }
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        // auto bomb on death if available
+        if (currentBombs > 0)
+            UseBomb();
 
         currentLives -= dmg;
 
@@ -232,12 +232,27 @@ public class Player : MonoBehaviour
             Die();
         else
             RespawnPlayer();
+
+        deathbombActive = false;
     }
 
-    void RespawnPlayer()
+    // ---------------- BOMB ----------------
+    void BombHandler()
     {
-        transform.position = respawnPosition;
-        currentBombs = bombsPerLife;
+        if (Input.GetKeyDown(bombKey) && currentBombs > 0 && !deathbombActive)
+            UseBomb();
+    }
+
+    void UseBomb()
+    {
+        currentBombs--;
+
+        if (bombExplosionPrefab != null)
+            Instantiate(bombExplosionPrefab, transform.position, Quaternion.identity);
+
+        if (CameraShake.Instance != null)
+            CameraShake.Instance.ShakeCamera(bombCameraShakeDuration, bombCameraShakeMagnitude);
+
         StartCoroutine(InvincibilityBlink());
     }
 
@@ -258,8 +273,51 @@ public class Player : MonoBehaviour
         isInvincible = false;
     }
 
+    void RespawnPlayer()
+    {
+        transform.position = respawnPosition;
+        currentBombs = bombsPerLife;
+        StartCoroutine(InvincibilityBlink());
+    }
+
+    // ---------------- DEATH ----------------
     void Die()
     {
+        isDead = true;
+        StartCoroutine(DeathStretchFade());
+    }
+
+    IEnumerator DeathStretchFade()
+    {
+        isInvincible = true;
+
+        // Reset scale for full effect
+        transform.localScale = Vector3.one;
+        Vector3 startScale = transform.localScale;
+        Vector3 stretchedScale = new Vector3(startScale.x * deathSquashAmount, startScale.y * deathStretchAmount, startScale.z);
+
+        Vector3 startPos = transform.position;
+        Vector3 targetPos = startPos + Vector3.up * deathPopHeight;
+
+        Color startColor = sr.color;
+        float t = 0f;
+
+        while (t < deathDuration)
+        {
+            t += Time.deltaTime;
+            float p = t / deathDuration;
+            float ease = 1f - Mathf.Pow(1f - p, 3f);
+
+            transform.localScale = Vector3.Lerp(startScale, stretchedScale, ease);
+            transform.position = Vector3.Lerp(startPos, targetPos, ease);
+
+            Color c = startColor;
+            c.a = Mathf.Lerp(1f, 0f, ease);
+            sr.color = c;
+
+            yield return null;
+        }
+
         gameObject.SetActive(false);
         Debug.Log("Game Over!");
     }
