@@ -82,7 +82,8 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (isDead) return; // stop everything if dead
+        if (GameState.Instance.GameplayLocked) return;
+        if (isDead) return;
 
         Move();
         Animate();

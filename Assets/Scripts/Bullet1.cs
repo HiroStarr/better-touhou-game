@@ -5,7 +5,12 @@ public class Bullet1 : MonoBehaviour
     public Vector3 direction = Vector3.up;
     public float speed = 10f;
 
-    void Update() => transform.position += direction * speed * Time.deltaTime;
+    void Update()
+    {
+        if (GameState.Instance.GameplayLocked) return;
+
+        transform.position += direction * speed * Time.deltaTime;
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -17,3 +22,4 @@ public class Bullet1 : MonoBehaviour
         }
     }
 }
+

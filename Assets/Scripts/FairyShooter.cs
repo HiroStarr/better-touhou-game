@@ -2,29 +2,16 @@ using UnityEngine;
 
 public class FairyShooter : MonoBehaviour
 {
-    public enum Pattern
-    {
-        Spread,
-        Circle,
-        Spiral,
-        Aimed,
-        Flower
-    }
-
-    [Header("Pattern")]
+    public enum Pattern { Spread, Circle, Spiral, Aimed, Flower }
     public Pattern pattern = Pattern.Spread;
-    public GameObject bulletPrefab;
 
-    [Header("Timing")]
+    public GameObject bulletPrefab;
     public float fireRate = 1f;
     public float bulletSpeed = 4f;
 
-    [Header("Spread / Circle / Flower")]
     public int bulletCount = 8;
     public float spreadAngle = 60f;
-
-    [Header("Rotation")]
-    public float spiralSpeed = 120f; // degrees per second
+    public float spiralSpeed = 120f;
 
     float fireTimer;
     float angle;
@@ -38,6 +25,8 @@ public class FairyShooter : MonoBehaviour
 
     void Update()
     {
+        if (GameState.Instance.GameplayLocked) return;
+
         fireTimer += Time.deltaTime;
         if (fireTimer >= fireRate)
         {
@@ -45,11 +34,8 @@ public class FairyShooter : MonoBehaviour
             Fire();
         }
 
-        // continuous rotation for spiral / flower
         if (pattern == Pattern.Spiral || pattern == Pattern.Flower)
-        {
             angle += spiralSpeed * Time.deltaTime;
-        }
     }
 
     void Fire()
@@ -64,70 +50,46 @@ public class FairyShooter : MonoBehaviour
         }
     }
 
-    // ---------------- PATTERNS ----------------
-
     void FireSpread()
     {
-        if (bulletCount <= 1)
-        {
-            SpawnBullet(Vector2.down);
-            return;
-        }
-
         float start = -spreadAngle * 0.5f;
-        float step = spreadAngle / (bulletCount - 1);
+        float step = spreadAngle / Mathf.Max(1, bulletCount - 1);
 
         for (int i = 0; i < bulletCount; i++)
-        {
-            float a = start + step * i;
-            SpawnBullet(AngleToDir(a));
-        }
+            SpawnBullet(AngleToDir(start + step * i));
     }
 
     void FireCircle()
     {
         for (int i = 0; i < bulletCount; i++)
-        {
-            float a = (360f / bulletCount) * i;
-            SpawnBullet(AngleToDir(a));
-        }
+            SpawnBullet(AngleToDir(360f / bulletCount * i));
     }
 
-    void FireSpiral()
-    {
-        SpawnBullet(AngleToDir(angle));
-    }
+    void FireSpiral() => SpawnBullet(AngleToDir(angle));
 
     void FireAimed()
     {
         if (!player) return;
-        Vector2 dir = (player.position - transform.position).normalized;
-        SpawnBullet(dir);
+        SpawnBullet((player.position - transform.position).normalized);
     }
 
     void FireFlower()
     {
         for (int i = 0; i < bulletCount; i++)
-        {
-            float a = (360f / bulletCount) * i + angle;
-            SpawnBullet(AngleToDir(a));
-        }
+            SpawnBullet(AngleToDir(360f / bulletCount * i + angle));
     }
-
-    // ---------------- HELPERS ----------------
 
     void SpawnBullet(Vector2 dir)
     {
         GameObject b = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
         EnemyBullet bullet = b.GetComponent<EnemyBullet>();
-        if (bullet != null)
+        if (bullet)
         {
-            bullet.direction = dir;   // Use direction from EnemyBullet.cs
+            bullet.direction = dir;
             bullet.speed = bulletSpeed;
         }
     }
 
-    // 0° = DOWN (vertical shmup standard)
     Vector2 AngleToDir(float angle)
     {
         float rad = (angle - 90f) * Mathf.Deg2Rad;

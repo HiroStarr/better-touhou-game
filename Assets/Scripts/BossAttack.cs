@@ -48,4 +48,13 @@ public class BossAttack : MonoBehaviour
     void FireRain() { float x = transform.position.x + Random.Range(-rainSpread, rainSpread); Vector3 pos = new Vector3(x, transform.position.y, 0f); GameObject b = Instantiate(rainBulletPrefab, pos, Quaternion.identity); EnemyBullet bullet = b.GetComponent<EnemyBullet>(); if (bullet != null) { bullet.direction = Vector2.down; bullet.speed = rainSpeed; } }
     void FireAimedShot() { if (!player) return; Vector2 dir = (player.position - transform.position).normalized; GameObject b = Instantiate(aimedBulletPrefab, transform.position, Quaternion.identity); EnemyBullet bullet = b.GetComponent<EnemyBullet>(); if (bullet != null) { bullet.direction = dir; bullet.speed = aimedSpeed; } }
     void SpawnBullet(GameObject prefab, float angleDeg, float speed) { float rad = angleDeg * Mathf.Deg2Rad; Vector2 dir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)); GameObject b = Instantiate(prefab, transform.position, Quaternion.identity); EnemyBullet bullet = b.GetComponent<EnemyBullet>(); if (bullet != null) { bullet.direction = dir; bullet.speed = speed; } }
+    void Update()
+    {
+        if (GameState.Instance.GameplayLocked) return;
+
+        // movement / shooting logic
+    }
+
 }
+
+

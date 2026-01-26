@@ -20,6 +20,8 @@ public class EnemyBullet : MonoBehaviour
 
     void Update()
     {
+        if (GameState.Instance.GameplayLocked) return;
+
         transform.position += (Vector3)(direction.normalized * speed * Time.deltaTime);
 
         if (IsOffScreen())

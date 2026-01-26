@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-    public List<LevelEvent> events;
+    public List<LevelEvent> events; // Assign in Inspector
 
-    float timer;
-    int index;
+    private float timer;
+    private int index;
 
     void Update()
     {
-        if (index >= events.Count) return;
+        if (index >= events.Count || events[index] == null) return;
 
         timer += Time.deltaTime;
 
@@ -24,9 +24,19 @@ public class LevelManager : MonoBehaviour
 
     IEnumerator SpawnWave(LevelEvent e)
     {
+        // Optional: show dialogue
+        if (e.dialogue != null)
+        {
+            DialogueManager.Instance.ShowDialogue(e.dialogue);
+            while (DialogueManager.Instance.IsDialoguePlaying)
+                yield return null;
+        }
+
+        // Spawn enemies
         for (int i = 0; i < e.count; i++)
         {
-            e.spawner.Spawn();
+            if (e.spawner != null)
+                e.spawner.Spawn();
             yield return new WaitForSeconds(e.interval);
         }
     }
