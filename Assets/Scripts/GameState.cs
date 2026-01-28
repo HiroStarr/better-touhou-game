@@ -5,13 +5,14 @@ public class GameState : MonoBehaviour
     public static GameState Instance;
 
     [HideInInspector] public bool GameplayLocked = false;
+    [HideInInspector] public bool TutorialMode = false;
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // optional if you switch scenes
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -19,13 +20,6 @@ public class GameState : MonoBehaviour
         }
     }
 
-    public void LockGameplay()
-    {
-        GameplayLocked = true;
-    }
-
-    public void UnlockGameplay()
-    {
-        GameplayLocked = false;
-    }
+    public void LockGameplay() => GameplayLocked = true;
+    public void UnlockGameplay() => GameplayLocked = false;
 }

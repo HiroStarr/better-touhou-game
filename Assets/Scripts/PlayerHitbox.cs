@@ -6,21 +6,14 @@ public class PlayerHitbox : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (dead) return;
+        Debug.Log("Hitbox collided with: " + other.name + " Tag: " + other.tag);
 
         if (other.CompareTag("EnemyBullet") || other.CompareTag("Enemy"))
         {
-            Die();
+            Player player = GetComponentInParent<Player>();
+            if (player != null)
+                player.TakeDamage(1);
         }
     }
 
-    void Die()
-    {
-        dead = true;
-        Debug.Log("PLAYER DEAD");
-
-        // Optional: death effect here
-
-        Destroy(transform.root.gameObject);
-    }
 }

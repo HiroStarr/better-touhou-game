@@ -4,14 +4,18 @@ public class Enemy : MonoBehaviour
 {
     public int maxHP = 3;
     public bool isBoss = false;
+    public bool invincible = false;
     public GameObject deathEffect;
 
     int currentHP;
+    public int CurrentHP => currentHP;
 
     void Awake() => currentHP = maxHP;
 
     public void TakeDamage(int dmg)
     {
+        if (invincible) return;
+
         currentHP -= dmg;
         if (currentHP <= 0)
             Die();
@@ -23,13 +27,5 @@ public class Enemy : MonoBehaviour
             Instantiate(deathEffect, transform.position, Quaternion.identity);
 
         Destroy(gameObject);
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (!other.CompareTag("PlayerBullet")) return;
-
-        TakeDamage(1);
-        Destroy(other.gameObject);
     }
 }

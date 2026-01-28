@@ -37,12 +37,10 @@ public class EnemyBullet : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Player")) return;
+        Debug.Log("Bullet hit: " + other.name + " Tag: " + other.tag);
 
-        Player p = other.GetComponent<Player>();
-        if (p != null)
-            p.TakeDamage(damage);
-
-        Destroy(gameObject);
+        if (other.CompareTag("PlayerHitbox"))
+            Destroy(gameObject);
     }
+
 }

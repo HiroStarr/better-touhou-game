@@ -1,5 +1,5 @@
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
+using TMPro;
 using System.Collections;
 
 public class DialogueManager : MonoBehaviour
@@ -7,13 +7,13 @@ public class DialogueManager : MonoBehaviour
     public static DialogueManager Instance;
 
     [Header("UI References")]
-    public GameObject panel;     // The dialogue panel
-    public Text dialogueText;    // Text component inside the panel
+    public GameObject panel;
+    public TextMeshProUGUI dialogueText;
 
     [Header("Settings")]
     public float lettersPerSecond = 40f;
 
-    [HideInInspector] public bool IsDialoguePlaying { get; private set; }
+    public bool IsDialoguePlaying { get; private set; }
 
     private void Awake()
     {
@@ -23,7 +23,6 @@ public class DialogueManager : MonoBehaviour
         if (panel != null) panel.SetActive(false);
     }
 
-    // Call this to start a dialogue
     public void ShowDialogue(Dialogue dialogue)
     {
         if (IsDialoguePlaying) return;
@@ -35,21 +34,29 @@ public class DialogueManager : MonoBehaviour
         IsDialoguePlaying = true;
         panel.SetActive(true);
 
+        // 🔒 Lock gameplay during dialogue
+        if (GameState.Instance != null)
+            GameState.Instance.LockGameplay();
+
         foreach (string line in dialogue.lines)
         {
             dialogueText.text = "";
+
             foreach (char c in line)
             {
                 dialogueText.text += c;
                 yield return new WaitForSeconds(1f / lettersPerSecond);
             }
 
-            // Wait for player to press a key to continue
             while (!Input.GetKeyDown(KeyCode.Z))
                 yield return null;
         }
 
         panel.SetActive(false);
         IsDialoguePlaying = false;
+
+        // 🔓 Unlock gameplay after dialogue
+        if (GameState.Instance != null)
+            GameState.Instance.UnlockGameplay();
     }
 }
