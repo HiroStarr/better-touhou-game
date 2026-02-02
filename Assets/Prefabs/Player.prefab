@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 054e3842f0e5d9240a127390925f01d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 12
+  speed: 8
   focusSpeed: 4
   focusKey: 304
   idleFrames:
@@ -161,7 +161,7 @@ MonoBehaviour:
   - {fileID: 1309459134, guid: 67ca5c7be18380d4cacd52e4a3695ea7, type: 3}
   - {fileID: 68544216, guid: 67ca5c7be18380d4cacd52e4a3695ea7, type: 3}
   - {fileID: -943467879, guid: 67ca5c7be18380d4cacd52e4a3695ea7, type: 3}
-  frameRate: 12
+  frameRate: 24
   bulletPrefab: {fileID: 609449931594769777, guid: 9a70c5691cf678b42877230d9cd8809b, type: 3}
   focusBulletPrefab: {fileID: 8043232585383188543, guid: b9469b87d15ad0046971ebb5e9a3b1f9, type: 3}
   bulletSpawn: {fileID: 8789565932692351696}

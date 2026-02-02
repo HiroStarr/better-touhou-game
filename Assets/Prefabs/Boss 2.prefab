@@ -150,6 +150,8 @@ MonoBehaviour:
   rainSpread: 10
   aimedFireRate: 0.3
   aimedSpeed: 7
+  deathDialogue: {fileID: 11400000, guid: bb846b45273a1e44ba45f1c5eaffacd9, type: 2}
+  nextSceneName: Title
 --- !u!50 &3988592796094508099
 Rigidbody2D:
   serializedVersion: 4
@@ -189,7 +191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f7eb7014ba05094ebc3957e815aec6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 400
+  maxHP: 750
   isBoss: 1
   invincible: 0
   deathEffect: {fileID: 7381761918312056934, guid: 362520c74de4fe74c9e41b4a67425cee, type: 3}

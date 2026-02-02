@@ -1,5 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class Player : MonoBehaviour
@@ -40,10 +41,10 @@ public class Player : MonoBehaviour
     public float deathbombWindow = 0.25f;
 
     [Header("Death Visual")]
-    public float deathStretchAmount = 2f;  // Y multiplier
-    public float deathSquashAmount = 0.5f; // X multiplier
-    public float deathDuration = 0.3f;     // duration of fade/stretch
-    public float deathPopHeight = 0.2f;    // upward pop
+    public float deathStretchAmount = 2f;
+    public float deathSquashAmount = 0.5f;
+    public float deathDuration = 0.3f;
+    public float deathPopHeight = 0.2f;
 
     [Header("Focus Hitbox")]
     public GameObject hitbox;
@@ -101,6 +102,19 @@ public class Player : MonoBehaviour
 
         Vector3 move = new Vector3(h, v, 0).normalized;
         transform.position += move * curSpeed * Time.deltaTime;
+
+        // ---- Clamp player inside screen ----
+        Vector3 pos = transform.position;
+        Vector3 bottomLeft = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0));
+        Vector3 topRight = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, 0));
+
+        float spriteHalfWidth = sr.bounds.size.x / 2;
+        float spriteHalfHeight = sr.bounds.size.y / 2;
+
+        pos.x = Mathf.Clamp(pos.x, bottomLeft.x + spriteHalfWidth, topRight.x - spriteHalfWidth);
+        pos.y = Mathf.Clamp(pos.y, bottomLeft.y + spriteHalfHeight, topRight.y - spriteHalfHeight);
+
+        transform.position = pos;
     }
 
     // ---------------- ANIMATION ----------------
@@ -207,7 +221,7 @@ public class Player : MonoBehaviour
         deathbombActive = true;
 
         if (HitFlash.Instance != null)
-            HitFlash.Instance.Flash(0.05f, 0.2f); // short red flash
+            HitFlash.Instance.Flash(0.05f, 0.2f);
 
         float timer = 0f;
         while (timer < deathbombWindow)
@@ -223,7 +237,6 @@ public class Player : MonoBehaviour
             yield return null;
         }
 
-        // auto bomb on death if available
         if (currentBombs > 0)
             UseBomb();
 
@@ -292,17 +305,13 @@ public class Player : MonoBehaviour
     {
         isInvincible = true;
 
-        // Reset scale for full effect
-        transform.localScale = Vector3.one;
         Vector3 startScale = transform.localScale;
         Vector3 stretchedScale = new Vector3(startScale.x * deathSquashAmount, startScale.y * deathStretchAmount, startScale.z);
-
         Vector3 startPos = transform.position;
         Vector3 targetPos = startPos + Vector3.up * deathPopHeight;
-
         Color startColor = sr.color;
-        float t = 0f;
 
+        float t = 0f;
         while (t < deathDuration)
         {
             t += Time.deltaTime;
@@ -319,7 +328,7 @@ public class Player : MonoBehaviour
             yield return null;
         }
 
-        gameObject.SetActive(false);
-        Debug.Log("Game Over!");
+        // After death animation, load Title scene
+        SceneManager.LoadScene("Title"); // Make sure scene is in Build Settings!
     }
 }

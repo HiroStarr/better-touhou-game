@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -24,22 +24,16 @@ public class BossAttack : MonoBehaviour
     public string nextSceneName = "Stage2";
 
     private Enemy enemyHealth;
+    private Coroutine phaseRoutine;
+    private bool dying = false;
+
     private int ringBurstShotsLeft;
     private float ringBurstCooldown;
     private float ringAngle;
-    private bool dying = false;
 
     void Start()
     {
         enemyHealth = GetComponent<Enemy>();
-        if (enemyHealth == null)
-        {
-            Debug.LogError("Boss needs Enemy component!");
-            return;
-        }
-
-        ringBurstShotsLeft = ringBurstCount;
-        ringBurstCooldown = 0f;
 
         if (!player)
         {
@@ -47,12 +41,13 @@ public class BossAttack : MonoBehaviour
             if (p) player = p.transform;
         }
 
-        StartCoroutine(PhaseController());
+        ResetRingBurst();
+        phaseRoutine = StartCoroutine(PhaseController());
     }
 
     IEnumerator PhaseController()
     {
-        while (!dying && enemyHealth.CurrentHP > 0)
+        while (!dying && !enemyHealth.IsDead)
         {
             ResetRingBurst();
             yield return StartCoroutine(RingPhase(5f));
@@ -63,7 +58,7 @@ public class BossAttack : MonoBehaviour
             yield return StartCoroutine(AimedPhase(4f));
         }
 
-        if (!dying)
+        if (!dying && enemyHealth.IsDead)
             StartCoroutine(DeathSequence());
     }
 
@@ -76,7 +71,7 @@ public class BossAttack : MonoBehaviour
     IEnumerator RingPhase(float duration)
     {
         float t = 0f;
-        while (t < duration && enemyHealth.CurrentHP > 0)
+        while (t < duration && !enemyHealth.IsDead)
         {
             UpdateRingBurst(Time.deltaTime);
             t += Time.deltaTime;
@@ -89,7 +84,7 @@ public class BossAttack : MonoBehaviour
         float t = 0f;
         float rainTimer = 0f;
 
-        while (t < duration && enemyHealth.CurrentHP > 0)
+        while (t < duration && !enemyHealth.IsDead)
         {
             UpdateRingBurst(Time.deltaTime);
 
@@ -108,7 +103,7 @@ public class BossAttack : MonoBehaviour
     IEnumerator AimedPhase(float duration)
     {
         float t = 0f;
-        while (t < duration && enemyHealth.CurrentHP > 0)
+        while (t < duration && !enemyHealth.IsDead)
         {
             FireAimedShot();
             yield return new WaitForSeconds(aimedFireRate);
@@ -156,7 +151,7 @@ public class BossAttack : MonoBehaviour
 
         GameObject b = Instantiate(rainBulletPrefab, pos, Quaternion.identity);
         EnemyBullet bullet = b.GetComponent<EnemyBullet>();
-        if (bullet != null)
+        if (bullet)
         {
             bullet.direction = Vector2.down;
             bullet.speed = rainSpeed;
@@ -171,7 +166,7 @@ public class BossAttack : MonoBehaviour
         GameObject b = Instantiate(aimedBulletPrefab, transform.position, Quaternion.identity);
 
         EnemyBullet bullet = b.GetComponent<EnemyBullet>();
-        if (bullet != null)
+        if (bullet)
         {
             bullet.direction = dir;
             bullet.speed = aimedSpeed;
@@ -185,7 +180,7 @@ public class BossAttack : MonoBehaviour
 
         GameObject b = Instantiate(prefab, transform.position, Quaternion.identity);
         EnemyBullet bullet = b.GetComponent<EnemyBullet>();
-        if (bullet != null)
+        if (bullet)
         {
             bullet.direction = dir;
             bullet.speed = speed;
@@ -196,12 +191,12 @@ public class BossAttack : MonoBehaviour
     {
         dying = true;
 
-        StopAllCoroutines();
+        if (phaseRoutine != null)
+            StopCoroutine(phaseRoutine);
 
-        // Stop shooting
         yield return new WaitForSeconds(0.5f);
 
-        if (deathDialogue != null)
+        if (deathDialogue != null && DialogueManager.Instance != null)
         {
             DialogueManager.Instance.ShowDialogue(deathDialogue);
             while (DialogueManager.Instance.IsDialoguePlaying)
