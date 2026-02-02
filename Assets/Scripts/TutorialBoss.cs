@@ -1,5 +1,6 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TutorialBoss : MonoBehaviour
 {
@@ -8,16 +9,19 @@ public class TutorialBoss : MonoBehaviour
     public Dialogue shootDialogue;
     public Dialogue focusDialogue;
     public Dialogue bombDialogue;
-    public Dialogue endDialogue;
+    public Dialogue winDialogue;
 
     public FairyShooter shooter;
     public Enemy enemy;
 
-    [Header("Bomb Cage")]
+    [Header("Encircle Bomb Attack")]
     public GameObject encircleBulletPrefab;
-    public int cageBulletCount = 32;
-    public float cageRadius = 4f;
-    public float cageInwardSpeed = 1.2f;
+    public int encircleCount = 28;
+    public float encircleRadius = 4f;
+    public float encircleSpeed = 1.6f;
+
+    [Header("Scene Transition")]
+    public string nextSceneName = "Stage1";
 
     void Start()
     {
@@ -44,9 +48,9 @@ public class TutorialBoss : MonoBehaviour
 
         // Focus lesson
         yield return Talk(focusDialogue);
-        shooter.pattern = FairyShooter.Pattern.Circle;
-        shooter.bulletSpeed = 1.5f;
-        shooter.fireRate = 2f;
+        shooter.pattern = FairyShooter.Pattern.Aimed;
+        shooter.bulletSpeed = 3.5f;
+        shooter.fireRate = 0.8f;
         shooter.enabled = true;
         yield return new WaitForSeconds(8f);
         shooter.enabled = false;
@@ -54,30 +58,71 @@ public class TutorialBoss : MonoBehaviour
         // Bomb lesson
         yield return Talk(bombDialogue);
         yield return new WaitForSeconds(0.5f);
-        yield return StartCoroutine(BombCageAttack());
-        yield return new WaitForSeconds(4f);
 
-        yield return Talk(endDialogue);
+        shooter.pattern = FairyShooter.Pattern.Aimed;
+        shooter.bulletSpeed = 5.5f;
+        shooter.fireRate = 0.35f;
+        shooter.enabled = true;
+
+        yield return StartCoroutine(EncircleAttack());
+        yield return new WaitForSeconds(5f);
+
+        shooter.enabled = false;
+
+        // 🔥 FINAL TEST FIGHT
+        yield return StartCoroutine(FinalBossPhase());
 
         GameState.Instance.TutorialMode = false;
     }
 
-    IEnumerator BombCageAttack()
+    IEnumerator FinalBossPhase()
     {
-        Transform player = GameObject.FindGameObjectWithTag("Player").transform;
-        if (player == null) yield break;
+        // Boss becomes vulnerable again
+        enemy.invincible = false;
+        enemy.maxHP = 60;
 
-        for (int i = 0; i < cageBulletCount; i++)
+        // Simple but real patterns
+        shooter.pattern = FairyShooter.Pattern.Aimed;
+        shooter.bulletSpeed = 4.5f;
+        shooter.fireRate = 0.6f;
+        shooter.enabled = true;
+
+        // Wait for boss defeat
+        yield return new WaitUntil(() => enemy.CurrentHP <= 0);
+
+        shooter.enabled = false;
+        enemy.invincible = true;
+
+        yield return Talk(winDialogue);
+
+        // Load next scene
+        SceneManager.LoadScene(nextSceneName);
+    }
+
+    IEnumerator EncircleAttack()
+    {
+        GameObject hitboxObj = GameObject.FindGameObjectWithTag("PlayerHitbox");
+        if (hitboxObj == null)
         {
-            float angle = (360f / cageBulletCount) * i * Mathf.Deg2Rad;
-            Vector3 pos = player.position + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * cageRadius;
+            Debug.LogError("No PlayerHitbox found!");
+            yield break;
+        }
+
+        Transform target = hitboxObj.transform;
+
+        for (int i = 0; i < encircleCount; i++)
+        {
+            float angle = (360f / encircleCount) * i * Mathf.Deg2Rad;
+            Vector3 pos = target.position +
+                          new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * encircleRadius;
 
             GameObject b = Instantiate(encircleBulletPrefab, pos, Quaternion.identity);
+
             EncircleBullet eb = b.GetComponent<EncircleBullet>();
             if (eb != null)
             {
-                eb.target = player;
-                eb.inwardSpeed = cageInwardSpeed;
+                eb.target = target;
+                eb.inwardSpeed = encircleSpeed;
             }
         }
 
