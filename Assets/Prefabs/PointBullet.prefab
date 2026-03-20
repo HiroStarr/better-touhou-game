@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2513011115630092224}
   m_Layer: 0
   m_Name: PointBullet
-  m_TagString: EnemyBullet
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -173,3 +173,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   direction: {x: 0, y: 0}
   speed: 0
+  damage: 1
+  maxLifetime: 8
+  offscreenPadding: 0.1

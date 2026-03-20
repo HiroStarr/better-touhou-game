@@ -189,4 +189,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHP: 15
   isBoss: 0
+  invincible: 0
   deathEffect: {fileID: 8113764796715364595, guid: f42bfed0e7db03841941211ec222fab9, type: 3}

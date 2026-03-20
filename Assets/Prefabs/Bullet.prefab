@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -3147894913422106235}
   m_Layer: 0
   m_Name: Bullet
-  m_TagString: PlayerBullet
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -100,8 +100,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fae45d5b0a31104e8e40da3a5fceb0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 20
   direction: {x: 0, y: 1, z: 0}
+  speed: 20
 --- !u!61 &3933651182836988852
 BoxCollider2D:
   m_ObjectHideFlags: 0
