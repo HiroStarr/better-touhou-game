@@ -329,6 +329,6 @@ public class Player : MonoBehaviour
         }
 
         // After death animation, load Title scene
-        SceneManager.LoadScene("Title"); // Make sure scene is in Build Settings
+        SceneManager.LoadScene("Main Menu"); // Make sure scene is in Build Settings
     }
 }
